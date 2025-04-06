@@ -22,7 +22,6 @@ local speed = Instance.new("TextLabel")
 local mine = Instance.new("TextButton")
 
 -- 最小化窗口组件
-local MinimizedFlyBtn = Instance.new("TextButton")
 local MaximizeBtn = Instance.new("TextButton")
 local MinimizedCloseBtn = Instance.new("TextButton")
 
@@ -150,33 +149,23 @@ local MinimizedCorner = Instance.new("UICorner")
 MinimizedCorner.CornerRadius = UDim.new(0, 8)
 MinimizedCorner.Parent = MinimizedFrame
 
--- 最小化飞行按钮
-MinimizedFlyBtn.Size = UDim2.new(0, 60, 0, 30)
-MinimizedFlyBtn.Position = UDim2.new(0.1, 0, 0.1, 0)
-MinimizedFlyBtn.Text = "飞行"
-MinimizedFlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinimizedFlyBtn.Font = Enum.Font.SourceSansBold
-MinimizedFlyBtn.TextSize = 14
-MinimizedFlyBtn.BackgroundColor3 = Color3.fromRGB(70, 120, 200)
-MinimizedFlyBtn.Parent = MinimizedFrame
-
 -- 最小化放大按钮
-MaximizeBtn.Size = UDim2.new(0, 20, 0, 20)
-MaximizeBtn.Position = UDim2.new(0.7, 0, 0.1, 0)
-MaximizeBtn.Text = "+"
+MaximizeBtn.Size = UDim2.new(0, 40, 0, 30)
+MaximizeBtn.Position = UDim2.new(0.1, 0, 0.1, 0)
+MaximizeBtn.Text = "恢复"
 MaximizeBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
 MaximizeBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
 MaximizeBtn.Parent = MinimizedFrame
 
 -- 最小化关闭按钮
-MinimizedCloseBtn.Size = UDim2.new(0, 20, 0, 20)
-MinimizedCloseBtn.Position = UDim2.new(0.9, 0, 0.1, 0)
-MinimizedCloseBtn.Text = "×"
+MinimizedCloseBtn.Size = UDim2.new(0, 40, 0, 30)
+MinimizedCloseBtn.Position = UDim2.new(0.55, 0, 0.1, 0)
+MinimizedCloseBtn.Text = "关闭"
 MinimizedCloseBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
 MinimizedCloseBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
 MinimizedCloseBtn.Parent = MinimizedFrame
 
--- 以下是原始功能逻辑（完全未修改）--
+-- 以下是原始功能逻辑（修改了最小化窗口部分）--
 speeds = 1
 local speaker = game:GetService("Players").LocalPlayer
 local chr = game.Players.LocalPlayer.Character
@@ -184,11 +173,10 @@ local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
 nowe = false
 
 -- 飞行开关功能
-onof.MouseButton1Down:connect(function()
+local function toggleFlight()
     if nowe == true then
         nowe = false
         onof.Text = "飞行:关闭"
-        MinimizedFlyBtn.Text = "飞行"
         
         speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,true)
         speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,true)
@@ -209,7 +197,6 @@ onof.MouseButton1Down:connect(function()
     else 
         nowe = true
         onof.Text = "飞行:开启"
-        MinimizedFlyBtn.Text = "飞行:开"
         
         for i = 1, speeds do
             spawn(function()
@@ -305,7 +292,9 @@ onof.MouseButton1Down:connect(function()
     plr.Character.Humanoid.PlatformStand = false
     game.Players.LocalPlayer.Character.Animate.Disabled = false
     tpwalking = false
-end)
+end
+
+onof.MouseButton1Down:connect(toggleFlight)
 
 -- 上升功能
 up.MouseButton1Down:connect(function()
@@ -393,73 +382,4 @@ end)
 
 MinimizedCloseBtn.MouseButton1Click:Connect(function()
     main:Destroy()
-end)
-
--- 最小化窗口飞行按钮
-MinimizedFlyBtn.MouseButton1Click:Connect(function()
-    if nowe == true then
-        nowe = false
-        MinimizedFlyBtn.Text = "飞行"
-        onof.Text = "飞行:关闭"
-        
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,true)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,true)
-        speaker.Character.Humanoid:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
-    else 
-        nowe = true
-        MinimizedFlyBtn.Text = "飞行:开"
-        onof.Text = "飞行:开启"
-        
-        for i = 1, speeds do
-            spawn(function()
-                local hb = game:GetService("RunService").Heartbeat    
-                tpwalking = true
-                local chr = game.Players.LocalPlayer.Character
-                local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
-                while tpwalking and hb:Wait() and chr and hum and hum.Parent do
-                    if hum.MoveDirection.Magnitude > 0 then
-                        chr:TranslateBy(hum.MoveDirection)
-                    end
-                end
-            end)
-        end
-        
-        game.Players.LocalPlayer.Character.Animate.Disabled = true
-        local Char = game.Players.LocalPlayer.Character
-        local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
-
-        for i,v in next, Hum:GetPlayingAnimationTracks() do
-            v:AdjustSpeed(0)
-        end
-        
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,false)
-        speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,false)
-        speaker.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
-    end
 end)
