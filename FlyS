@@ -1,7 +1,7 @@
 game:GetService("StarterGui"):SetCore("SendNotification",{
     Title = "飞行脚本",
     Text ="作者: 快看万叶",
-    Duration = 2.5;
+    Duration = 5;
 })
 
 -- 主UI
@@ -22,6 +22,7 @@ local speed = Instance.new("TextLabel")
 local mine = Instance.new("TextButton")
 
 -- 最小化窗口组件
+local MinimizedFlyBtn = Instance.new("TextButton")
 local MaximizeBtn = Instance.new("TextButton")
 local MinimizedCloseBtn = Instance.new("TextButton")
 
@@ -52,7 +53,7 @@ TitleBar.Parent = MainFrame
 -- 标题
 TitleLabel.Size = UDim2.new(0.6, 0, 1, 0)
 TitleLabel.Position = UDim2.new(0.05, 0, 0, 0)
-TitleLabel.Text = "飞行控制 v1.0"
+TitleLabel.Text = "飞行 v1.2"
 TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleLabel.Font = Enum.Font.SourceSansBold
 TitleLabel.TextSize = 16
@@ -95,7 +96,7 @@ down.TextSize = 16
 down.BackgroundColor3 = Color3.fromRGB(180, 80, 80)
 down.Parent = MainFrame
 
--- 加速按钮 (放在减速按钮上面)
+-- 加速按钮
 plus.Size = UDim2.new(0, 50, 0, 30)
 plus.Position = UDim2.new(0.3, 0, 0.35, 0)
 plus.Text = "加速 +1"
@@ -149,23 +150,33 @@ local MinimizedCorner = Instance.new("UICorner")
 MinimizedCorner.CornerRadius = UDim.new(0, 8)
 MinimizedCorner.Parent = MinimizedFrame
 
+-- 最小化飞行按钮
+MinimizedFlyBtn.Size = UDim2.new(0, 60, 0, 30)
+MinimizedFlyBtn.Position = UDim2.new(0.1, 0, 0.1, 0)
+MinimizedFlyBtn.Text = "飞行"
+MinimizedFlyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizedFlyBtn.Font = Enum.Font.SourceSansBold
+MinimizedFlyBtn.TextSize = 14
+MinimizedFlyBtn.BackgroundColor3 = Color3.fromRGB(70, 120, 200)
+MinimizedFlyBtn.Parent = MinimizedFrame
+
 -- 最小化放大按钮
-MaximizeBtn.Size = UDim2.new(0, 40, 0, 30)
-MaximizeBtn.Position = UDim2.new(0.1, 0, 0.1, 0)
-MaximizeBtn.Text = "恢复"
+MaximizeBtn.Size = UDim2.new(0, 20, 0, 20)
+MaximizeBtn.Position = UDim2.new(0.7, 0, 0.1, 0)
+MaximizeBtn.Text = "+"
 MaximizeBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
 MaximizeBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
 MaximizeBtn.Parent = MinimizedFrame
 
 -- 最小化关闭按钮
-MinimizedCloseBtn.Size = UDim2.new(0, 40, 0, 30)
-MinimizedCloseBtn.Position = UDim2.new(0.55, 0, 0.1, 0)
-MinimizedCloseBtn.Text = "关闭"
+MinimizedCloseBtn.Size = UDim2.new(0, 20, 0, 20)
+MinimizedCloseBtn.Position = UDim2.new(0.9, 0, 0.1, 0)
+MinimizedCloseBtn.Text = "×"
 MinimizedCloseBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
 MinimizedCloseBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
 MinimizedCloseBtn.Parent = MinimizedFrame
 
--- 以下是原始功能逻辑（修改了最小化窗口部分）--
+-- 飞行功能变量
 speeds = 1
 local speaker = game:GetService("Players").LocalPlayer
 local chr = game.Players.LocalPlayer.Character
@@ -173,10 +184,11 @@ local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
 nowe = false
 
 -- 飞行开关功能
-local function toggleFlight()
+local function ToggleFlight()
     if nowe == true then
         nowe = false
         onof.Text = "飞行:关闭"
+        MinimizedFlyBtn.Text = "飞行"
         
         speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,true)
         speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,true)
@@ -197,6 +209,7 @@ local function toggleFlight()
     else 
         nowe = true
         onof.Text = "飞行:开启"
+        MinimizedFlyBtn.Text = "飞行:开"
         
         for i = 1, speeds do
             spawn(function()
@@ -294,7 +307,13 @@ local function toggleFlight()
     tpwalking = false
 end
 
-onof.MouseButton1Down:connect(toggleFlight)
+-- 主飞行按钮点击事件
+onof.MouseButton1Down:Connect(ToggleFlight)
+
+-- 最小化飞行按钮点击事件 - 直接调用主飞行按钮功能
+MinimizedFlyBtn.MouseButton1Click:Connect(function()
+    ToggleFlight()
+end)
 
 -- 上升功能
 up.MouseButton1Down:connect(function()
